@@ -88,17 +88,17 @@ function setPreset(type) {
         createInputs();
         const confs = document.querySelectorAll('.body-config');
         // 綺麗な円軌道に近い設定
-        updateConf(confs[0], cx - 100, cy, 0, 11.2, 1000);
-        updateConf(confs[1], cx + 100, cy, 0, -11.2, 1000);
+        updateConf(confs[0], cx - 100, cy, 11.2, 11.2, 1000);
+        updateConf(confs[1], cx + 100, cy, -11.2, -11.2, 1000);
     } else if (type === '3body_8') {
-        document.getElementById('bodyCount').value = 3;
-        createInputs();
-        const confs = document.querySelectorAll('.body-config');
-        // 8の字解（数学的に安定しやすい数値）
-        const vx = 4.66, vy = 4.32;
-        updateConf(confs[0], cx - 150, cy, vx, vy, 200);
-        updateConf(confs[1], cx + 150, cy, vx, vy, 200);
-        updateConf(confs[2], cx, cy, -2*vx, -2*vy, 200);
+    document.getElementById('bodyCount').value = 3;
+    createInputs();
+    const confs = document.querySelectorAll('.body-config');
+    // 数学的に計算された精密な比率
+    const vx = 4.6645, vy = 4.3218; 
+    updateConf(confs[0], cx - 150, cy, vx, vy, 200);
+    updateConf(confs[1], cx + 150, cy, vx, vy, 200);
+    updateConf(confs[2], cx, cy, -2*vx, -2*vy, 200);
     }
     initSim();
 }
