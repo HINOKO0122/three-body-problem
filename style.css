@@ -1,57 +1,71 @@
 body {
     margin: 0;
     display: flex;
-    background: #111;
+    background: #000;
     color: #eee;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: sans-serif;
     height: 100vh;
 }
 
 #controls {
     width: 320px;
-    background: #222;
+    background: #1a1a1a;
     padding: 20px;
     overflow-y: auto;
-    border-right: 1px solid #444;
+    border-right: 1px solid #333;
+    z-index: 10;
 }
 
-.preset-section, .input-section {
+.section {
     margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin-top: 5px;
 }
 
 .body-config {
-    background: #333;
+    background: #252525;
     padding: 10px;
     margin-top: 10px;
     border-radius: 4px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+}
+
+.input-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
 }
 
 input[type="number"] {
-    background: #444;
-    border: 1px solid #555;
-    color: white;
-    padding: 4px;
-    width: 60px;
-    border-radius: 3px;
+    background: #333;
+    border: 1px solid #444;
+    color: #fff;
+    width: 65px;
+    padding: 2px;
 }
 
 button {
     cursor: pointer;
     border: none;
     border-radius: 3px;
-    padding: 8px 12px;
+    padding: 6px 10px;
     background: #444;
     color: white;
-    transition: 0.2s;
 }
 
 button:hover { background: #555; }
 
-.btn-primary { background: #007bff; width: 100%; margin-bottom: 5px; }
+.btn-primary { background: #007bff; width: 100%; margin-bottom: 5px; font-weight: bold; }
 .btn-primary:hover { background: #0056b3; }
 
-.btn-preset { background: #28a745; font-size: 0.8rem; }
+.btn-preset { background: #28a745; font-size: 0.75rem; }
 
 canvas {
     flex-grow: 1;
