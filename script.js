@@ -94,12 +94,20 @@ function setPreset(type) {
     document.getElementById('bodyCount').value = 3;
     createInputs();
     const confs = document.querySelectorAll('.body-config');
-    // 数学的に計算された精密な比率
-    const vx = 4.6645, vy = 4.3218; 
-    updateConf(confs[0], cx - 150, cy, vx, vy, 200);
-    updateConf(confs[1], cx + 150, cy, vx, vy, 200);
-    updateConf(confs[2], cx, cy, -2*vx, -2*vy, 200);
-    }
+    
+    // G=5000, dt=0.005, 質量=200 の環境に最適化した数値
+    // 8の字解の基本パラメータ (x1 = -x2, x3 = 0, v3 = -2*v1)
+    const posX = 138.3; // 中央からの距離
+    const vx = 4.65;
+    const vy = 5.34;
+
+    // 物体1: 左側
+    updateConf(confs[0], cx - posX, cy, vx, vy, 200);
+    // 物体2: 右側
+    updateConf(confs[1], cx + posX, cy, vx, vy, 200);
+    // 物体3: 中央 (速度は1と2の合成を打ち消す方向)
+    updateConf(confs[2], cx, cy, -2 * vx, -2 * vy, 200);
+}
     initSim();
 }
 
