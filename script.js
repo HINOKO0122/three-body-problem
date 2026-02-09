@@ -88,8 +88,8 @@ function setPreset(type) {
         createInputs();
         const confs = document.querySelectorAll('.body-config');
         // 綺麗な円軌道に近い設定
-        updateConf(confs[0], cx - 100, cy, 11.2, 11.2, 1000);
-        updateConf(confs[1], cx + 100, cy, -11.2, -11.2, 1000);
+        updateConf(confs[0], cx - 100, cy, 11.2, 11.2, 10);
+        updateConf(confs[1], cx + 100, cy, -11.2, -11.2, 10);
     } else if (type === '3body_8') {
     document.getElementById('bodyCount').value = 3;
     createInputs();
