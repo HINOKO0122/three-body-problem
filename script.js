@@ -95,17 +95,16 @@ function setPreset(type) {
     createInputs();
     const confs = document.querySelectorAll('.body-config');
     
-    // G=5000, dt=0.005, 質量=200 の環境に最適化した数値
-    // 8の字解の基本パラメータ (x1 = -x2, x3 = 0, v3 = -2*v1)
-    const posX = 138.3; // 中央からの距離
-    const vx = 4.65;
+    // G=5000, 質量=200 の環境で安定しやすい8の字の比率
+    const vx = 4.66;
     const vy = 5.34;
+    const posX = 150; // 中央からの距離
 
-    // 物体1: 左側
+    // 物体1: 左側（上へ飛ぶ）
     updateConf(confs[0], cx - posX, cy, vx, vy, 200);
-    // 物体2: 右側
+    // 物体2: 右側（上へ飛ぶ）
     updateConf(confs[1], cx + posX, cy, vx, vy, 200);
-    // 物体3: 中央 (速度は1と2の合成を打ち消す方向)
+    // 物体3: 中央（下へ2倍の速さで飛ぶ）
     updateConf(confs[2], cx, cy, -2 * vx, -2 * vy, 200);
 }
     initSim();
