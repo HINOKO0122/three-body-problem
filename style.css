@@ -1,61 +1,58 @@
 body {
     margin: 0;
     display: flex;
-    background-color: #1a1a1a;
-    color: white;
-    font-family: sans-serif;
+    background: #111;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     height: 100vh;
-    overflow: hidden;
 }
 
 #controls {
-    width: 350px;
+    width: 320px;
+    background: #222;
     padding: 20px;
-    background: #2d2d2d;
     overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+    border-right: 1px solid #444;
+}
+
+.preset-section, .input-section {
+    margin-bottom: 20px;
 }
 
 .body-config {
-    border: 1px solid #444;
+    background: #333;
     padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
 }
 
-.body-config h4 { margin: 0 0 10px 0; }
-
-label { display: block; font-size: 12px; margin-top: 5px; }
-
-input {
-    width: 80%;
+input[type="number"] {
     background: #444;
-    border: 1px solid #666;
+    border: 1px solid #555;
     color: white;
-    padding: 3px;
-}
-
-.actions {
-    margin-top: 20px;
-    position: sticky;
-    bottom: 0;
-    background: #2d2d2d;
-    padding-top: 10px;
+    padding: 4px;
+    width: 60px;
+    border-radius: 3px;
 }
 
 button {
     cursor: pointer;
-    padding: 8px 15px;
-    background: #007bff;
-    color: white;
     border: none;
     border-radius: 3px;
-    margin-right: 5px;
+    padding: 8px 12px;
+    background: #444;
+    color: white;
+    transition: 0.2s;
 }
 
-button:hover { background: #0056b3; }
+button:hover { background: #555; }
+
+.btn-primary { background: #007bff; width: 100%; margin-bottom: 5px; }
+.btn-primary:hover { background: #0056b3; }
+
+.btn-preset { background: #28a745; font-size: 0.8rem; }
 
 canvas {
     flex-grow: 1;
-    cursor: crosshair;
 }
