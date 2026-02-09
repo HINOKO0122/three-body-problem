@@ -139,7 +139,7 @@ function loop() {
                 for (let j = i + 1; j < bodies.length; j++) {
                     const b1 = bodies[i]; const b2 = bodies[j];
                     const dx = b2.x - b1.x, dy = b2.y - b1.y;
-                    const distSq = dx * dx + dy * dy + 1; // softening
+                    const distSq = dx * dx + dy * dy + 0.01; // softening
                     const dist = Math.sqrt(distSq);
                     const force = (G * b1.mass * b2.mass) / distSq;
                     const ax = (force * dx) / (dist * b1.mass);
