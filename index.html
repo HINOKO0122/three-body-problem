@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n-Body Problem Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="controls">
+        <h2>n体問題シミュレーター</h2>
+        <div class="setting-group">
+            <label>物体の数:</label>
+            <input type="number" id="bodyCount" value="3" min="1" max="10">
+            <button id="setupBtn">設定を更新</button>
+        </div>
+        
+        <div id="bodyInputs">
+            </div>
+
+        <div class="actions">
+            <button id="startBtn">再生 / 一時停止</button>
+            <button id="resetBtn">リセット</button>
+        </div>
+    </div>
+
+    <canvas id="simCanvas"></canvas>
+
+    <script src="main.js"></script> </body>
+</html>
