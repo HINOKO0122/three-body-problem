@@ -2,29 +2,39 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>n-Body Problem Simulator</title>
+    <title>n-Body Simulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="controls">
         <h2>n体問題シミュレーター</h2>
-        <div class="setting-group">
-            <label>物体の数:</label>
-            <input type="number" id="bodyCount" value="3" min="1" max="10">
-            <button id="setupBtn">設定を更新</button>
-        </div>
         
-        <div id="bodyInputs">
+        <section class="preset-section">
+            <strong>プリセット:</strong>
+            <div class="button-group">
+                <button class="btn-preset" onclick="setPreset('2body')">2体 (安定)</button>
+                <button class="btn-preset" onclick="setPreset('3body_8')">3体 (8の字)</button>
             </div>
+        </section>
+
+        <section class="input-section">
+            <label>物体の数:</label>
+            <div class="row">
+                <input type="number" id="bodyCount" value="3" min="1" max="10">
+                <button onclick="createInputs()">更新</button>
+            </div>
+            <div id="bodyInputs"></div>
+        </section>
 
         <div class="actions">
-            <button id="startBtn">再生 / 一時停止</button>
-            <button id="resetBtn">リセット</button>
+            <button id="startBtn" class="btn-primary" onclick="toggleSim()">再生</button>
+            <button onclick="initSim()">リセット</button>
+            <button onclick="clearPaths()">軌跡消去</button>
         </div>
     </div>
 
     <canvas id="simCanvas"></canvas>
 
-    <script src="main.js"></script> </body>
+    <script src="script.js"></script>
+</body>
 </html>
