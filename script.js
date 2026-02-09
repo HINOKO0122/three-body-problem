@@ -8,20 +8,22 @@ class Body {
     }
 
     draw(ctx) {
-        // 軌跡の描画
+        // 軌跡を描画（path.shiftを無くしたのでずっと残ります）
         if (this.path.length > 1) {
             ctx.beginPath();
             ctx.strokeStyle = this.color;
             ctx.lineWidth = 1;
-            ctx.globalAlpha = 0.5;
+            ctx.globalAlpha = 0.4; // 軌跡を少し薄くして見やすく
             ctx.moveTo(this.path[0].x, this.path[0].y);
-            for (let p of this.path) ctx.lineTo(p.x, p.y);
+            for (let i = 1; i < this.path.length; i++) {
+                ctx.lineTo(this.path[i].x, this.path[i].y);
+            }
             ctx.stroke();
             ctx.globalAlpha = 1;
         }
-        // 本体の描画（質量の3乗根に比例させて半径を決める）
+        // 本体
         ctx.beginPath();
-        const radius = Math.max(3, Math.pow(this.mass, 1/3) * 2);
+        const radius = Math.max(4, Math.pow(this.mass, 1/3) * 1.5);
         ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
         ctx.fill();
@@ -30,8 +32,9 @@ class Body {
 
 let bodies = [];
 let isRunning = false;
-const G = 1000; // 重力定数
-const dt = 0.01; // シミュレーション速度
+const G = 5000; 
+const dt = 0.005; // 刻みを小さく
+const subSteps = 10; // 1フレームに10回計算して精度を高める
 
 const canvas = document.getElementById('simCanvas');
 const ctx = canvas.getContext('2d');
@@ -56,7 +59,7 @@ function createInputs() {
             <div class="body-config" style="border-left: 4px solid ${color}">
                 <strong>物体 ${i + 1}</strong>
                 <div class="input-row">座標X,Y: <input type="number" class="ix" value="${Math.round(cx + (i-1)*150)}"> <input type="number" class="iy" value="${Math.round(cy)}"></div>
-                <div class="input-row">速度X,Y: <input type="number" class="ivx" step="0.5" value="0"> <input type="number" class="ivy" step="0.5" value="${i%2==0?10:-10}"></div>
+                <div class="input-row">速度X,Y: <input type="number" class="ivx" step="0.1" value="0"> <input type="number" class="ivy" step="0.1" value="${i%2==0?10:-10}"></div>
                 <div class="input-row">質量: <input type="number" class="im" value="100"></div>
                 <input type="hidden" class="icolor" value="${color}">
             </div>`;
@@ -84,19 +87,20 @@ function setPreset(type) {
         document.getElementById('bodyCount').value = 2;
         createInputs();
         const confs = document.querySelectorAll('.body-config');
-        updateConf(confs[0], cx-100, cy, 0, 15, 500);
-        updateConf(confs[1], cx+100, cy, 0, -15, 500);
+        // 綺麗な円軌道に近い設定
+        updateConf(confs[0], cx - 100, cy, 0, 11.2, 500);
+        updateConf(confs[1], cx + 100, cy, 0, -11.2, 500);
     } else if (type === '3body_8') {
         document.getElementById('bodyCount').value = 3;
         createInputs();
         const confs = document.querySelectorAll('.body-config');
-        // 近似的な8の字解の設定
-        updateConf(confs[0], cx-100, cy, 5, 8, 200);
-        updateConf(confs[1], cx+100, cy, 5, 8, 200);
-        updateConf(confs[2], cx, cy, -10, -16, 200);
+        // 8の字解（数学的に安定しやすい数値）
+        const vx = 4.66, vy = 4.32;
+        updateConf(confs[0], cx - 150, cy, vx, vy, 200);
+        updateConf(confs[1], cx + 150, cy, vx, vy, 200);
+        updateConf(confs[2], cx, cy, -2*vx, -2*vy, 200);
     }
     initSim();
-    document.getElementById('startBtn').innerText = "再生";
 }
 
 function updateConf(el, x, y, vx, vy, m) {
@@ -111,34 +115,44 @@ function toggleSim() {
     document.getElementById('startBtn').innerText = isRunning ? "一時停止" : "再生";
 }
 
-function clearPaths() { bodies.forEach(b => b.path = []); }
+function clearPaths() { 
+    bodies.forEach(b => b.path = []); 
+}
 
 function loop() {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (isRunning) {
-        // 重力計算（全物体ペア）
-        for (let i = 0; i < bodies.length; i++) {
-            let ax = 0, ay = 0;
-            const b1 = bodies[i];
-            for (let j = 0; j < bodies.length; j++) {
-                if (i === j) continue;
-                const b2 = bodies[j];
-                const dx = b2.x - b1.x, dy = b2.y - b1.y;
-                const rSq = dx*dx + dy*dy + 500; // 近接時の吹き飛び防止
-                const r = Math.sqrt(rSq);
-                const acc = (G * b2.mass) / rSq; // a = G*m/r^2
-                ax += acc * (dx/r); ay += acc * (dy/r);
+        // サブステップ計算（1フレームの間に何度も回して精度を上げる）
+        for (let s = 0; s < subSteps; s++) {
+            // 1. 加速度を計算
+            let accelerations = bodies.map(() => ({ ax: 0, ay: 0 }));
+            for (let i = 0; i < bodies.length; i++) {
+                for (let j = i + 1; j < bodies.length; j++) {
+                    const b1 = bodies[i]; const b2 = bodies[j];
+                    const dx = b2.x - b1.x, dy = b2.y - b1.y;
+                    const distSq = dx * dx + dy * dy + 100; // softening
+                    const dist = Math.sqrt(distSq);
+                    const force = (G * b1.mass * b2.mass) / distSq;
+                    const ax = (force * dx) / (dist * b1.mass);
+                    const ay = (force * dy) / (dist * b1.mass);
+                    accelerations[i].ax += ax;
+                    accelerations[i].ay += ay;
+                    accelerations[j].ax -= (force * dx) / (dist * b2.mass);
+                    accelerations[j].ay -= (force * dy) / (dist * b2.mass);
+                }
             }
-            b1.vx += ax * dt; b1.vy += ay * dt;
+            // 2. 速度と位置を更新
+            bodies.forEach((b, i) => {
+                b.vx += accelerations[i].ax * dt;
+                b.vy += accelerations[i].ay * dt;
+                b.x += b.vx * dt;
+                b.y += b.vy * dt;
+            });
         }
-        // 更新
-        bodies.forEach(b => {
-            b.x += b.vx * dt * 10; b.y += b.vy * dt * 10;
-            b.path.push({x: b.x, y: b.y});
-            if (b.path.length > 600) b.path.shift();
-        });
+        // 軌跡を記録（1フレームに1回だけ記録）
+        bodies.forEach(b => b.path.push({ x: b.x, y: b.y }));
     }
 
     bodies.forEach(b => b.draw(ctx));
